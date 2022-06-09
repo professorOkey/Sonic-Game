@@ -5,7 +5,7 @@ import {
   stand,
   fallItems,
   createScoreCounter,
-} from "/mainFunctions.js";
+} from "./mainFunctions.js";
 import { renderPlatforms } from "./platforms.js";
 import { renderInitCoins } from "./coins.js";
 
