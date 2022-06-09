@@ -6,8 +6,8 @@ import {
   fallItems,
   createScoreCounter,
 } from "/mainFunctions.js";
-import { renderPlatforms } from "/platforms.js";
-import { renderInitCoins } from "/coins.js";
+import { renderPlatforms } from "./platforms.js";
+import { renderInitCoins } from "./coins.js";
 
 export let fallItemsInterval;
 

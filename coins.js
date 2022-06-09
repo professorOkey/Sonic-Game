@@ -1,4 +1,4 @@
-import { platforms } from "/platforms.js";
+import { platforms } from "./platforms.js";
 
 let coins = [];
 let coinBottom;

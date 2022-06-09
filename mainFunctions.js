@@ -1,6 +1,6 @@
-import { platforms, createNewPlatformWithCoin } from "/platforms.js";
-import { coins } from "/coins.js";
-import { fallItemsInterval } from "/app.js";
+import { platforms, createNewPlatformWithCoin } from "./platforms.js";
+import { coins } from "./coins.js";
+import { fallItemsInterval } from "./app.js";
 
 let isOnPlatform = false;
 let isOnStartGrass = true;
@@ -238,7 +238,6 @@ const fallItems = (hero) => {
     }
 
     if (heroBottom <= 12) {
-      isCanCollectCoins = false;
       stopCollectingCoins();
     }
   }

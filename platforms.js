@@ -1,4 +1,4 @@
-import { createCoins } from "/coins.js";
+import { createCoins } from "./coins.js";
 
 let platforms = [];
 let platformsPerY = 6;
