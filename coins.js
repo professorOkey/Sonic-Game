@@ -6,11 +6,11 @@ let coinBottom;
 const createCoins = (platformBottom, platformLeft) => {
   let coin = document.createElement("div");
   coin.classList.add("score");
-  coinBottom = platformBottom
+  coinBottom = platformBottom;
   coin.style.bottom = coinBottom + 3 + "vh";
   coin.style.left = platformLeft + Math.floor(Math.random() * 12) + "vw";
   coins.push(coin);
-  document.body.insertAdjacentElement("afterbegin", coin)
+  document.body.insertAdjacentElement("afterbegin", coin);
 };
 
 const renderInitCoins = () => {
@@ -21,4 +21,4 @@ const renderInitCoins = () => {
   });
 };
 
-export {renderInitCoins, coins, createCoins}
+export { renderInitCoins, coins, createCoins };

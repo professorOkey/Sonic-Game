@@ -21,61 +21,73 @@ let heroBottom = startHeight;
 let collectedCoins = 0;
 let scoreCounter;
 
+const clearSideMoves = () => {
+  isMovingRight = false;
+  isMovingLeft = false;
+  clearInterval(rightMoveInterval);
+  clearInterval(leftMoveInterval);
+};
+
+const checkPrevAndCurrentPosition = (platformBottom, platformLeft) => {
+  return (
+    heroBottomPrevious >= platformBottom &&
+    heroBottomPrevious <= platformBottom + 3 &&
+    heroLeftPrevious + 3 >= platformLeft &&
+    heroLeftPrevious <= platformLeft + 12 &&
+    heroBottom >= platformBottom &&
+    heroBottom <= platformBottom + 3 &&
+    (heroLeft + 3 <= platformLeft || heroLeft >= platformLeft + 12)
+  );
+};
+
 const stand = (hero) => {
   if (!isJumping && !isFalling) {
-    if (isMovingRight) {
-      clearInterval(rightMoveInterval);
-      isMovingRight = false;
-    }
-
-    if (isMovingLeft) {
-      clearInterval(leftMoveInterval);
-      isMovingLeft = false;
-    }
+    clearSideMoves();
     hero.style.backgroundImage = "url(./img/Sonic.webp)";
   }
 };
 
 const fall = (hero) => {
-  hero.style.backgroundImage = "url(./img/sonicJump.gif)";
-  isJumping = false;
-  isFalling = true;
-  isOnPlatform = false;
-  clearInterval(jumpMoveInterval);
-  fallingMoveInterval = setInterval(() => {
-    if (isFalling) {
+  if (!isJumping) {
+    hero.style.backgroundImage = "url(./img/sonicJump.gif)";
+    isFalling = true;
+    isOnPlatform = false;
+    clearInterval(jumpMoveInterval);
+    fallingMoveInterval = setInterval(() => {
       heroBottom -= 1.2 + speed * 0.5;
       hero.style.bottom = heroBottom + "vh";
-    }
 
-    if (heroBottom <= 8) {
-      isFalling = false;
-      clearInterval(fallingMoveInterval);
-      isOnStartGrass = true;
-      startHeight = heroBottom;
-      stand(hero);
-    }
-
-    platforms.forEach((platform) => {
-      let platformBottom = +platform.style.bottom.slice(0, -2);
-      let platformLeft = +platform.style.left.slice(0, -2);
-
-      if (
-        heroBottom >= platformBottom &&
-        heroBottom <= platformBottom + 3 &&
-        heroLeft + 3 >= platformLeft &&
-        heroLeft <= platformLeft + 12
-      ) {
+      if (heroBottom <= 8) {
         isFalling = false;
         clearInterval(fallingMoveInterval);
-        isOnPlatform = true;
+        isOnStartGrass = true;
         startHeight = heroBottom;
         stand(hero);
       }
 
-      collectingCoins(hero);
-    });
-  }, 25);
+      platforms.forEach((platform) => {
+        let platformBottom = +platform.style.bottom.slice(0, -2);
+        let platformLeft = +platform.style.left.slice(0, -2);
+
+        if (
+          heroBottom >= platformBottom &&
+          heroBottom <= platformBottom + 3 &&
+          heroLeft + 3 >= platformLeft &&
+          heroLeft <= platformLeft + 12
+        ) {
+          isFalling = false;
+          clearInterval(fallingMoveInterval);
+          isOnPlatform = true;
+          startHeight = heroBottom;
+          heroBottomPrevious = heroBottom;
+          heroLeftPrevious = heroLeft;
+          stand(hero);
+        }
+
+        collectingCoins();
+      });
+    }, 25);
+  }
 };
 
 const jump = (hero) => {
@@ -89,8 +101,8 @@ const jump = (hero) => {
       hero.style.bottom = heroBottom + "vh";
 
       if (heroBottom > startHeight + 20) {
-        fall(hero);
         isJumping = false;
+        fall(hero);
       }
     }, 25);
   }
@@ -101,15 +113,7 @@ const checkOffPlatform = (hero) => {
     let platformBottom = +platform.style.bottom.slice(0, -2);
     let platformLeft = +platform.style.left.slice(0, -2);
 
-    if (
-      heroBottomPrevious >= platformBottom &&
-      heroBottomPrevious <= platformBottom + 3 &&
-      heroLeftPrevious + 3 >= platformLeft &&
-      heroLeftPrevious <= platformLeft + 12 &&
-      heroBottom >= platformBottom &&
-      heroBottom <= platformBottom + 3 &&
-      (heroLeft + 3 <= platformLeft || heroLeft >= platformLeft + 12)
-    ) {
+    if (checkPrevAndCurrentPosition(platformBottom, platformLeft)) {
       isOnPlatform = false;
       fall(hero);
     }
@@ -130,7 +134,7 @@ const collectingCoins = () => {
       heroLeft <= coinLeft + 3
     ) {
       let currentCoin = coins[index];
-      currentCoin.classList.remove("score");
+      currentCoin.remove();
       coins.splice(index, 1);
       collectedCoins++;
       scoreCounter.innerHTML = `Score: ${collectedCoins}`;
@@ -151,8 +155,10 @@ const collectingCoins = () => {
 };
 
 const moveLeft = (hero, repeat) => {
+  isMovingRight = false;
   if (!repeat) {
     clearInterval(leftMoveInterval);
+
     isMovingLeft = true;
     hero.style.transform = "scaleX(-1)";
 
@@ -161,22 +167,21 @@ const moveLeft = (hero, repeat) => {
     }
 
     leftMoveInterval = setInterval(() => {
-      if (heroLeft >= 0 && (isJumping || isFalling)) {
-        heroLeft -= 0.65 + speed * 0.2;
-        hero.style.left = heroLeft + "vw";
-      } else if (heroLeft >= 0) {
-        heroLeft -= 0.5;
+      if (heroLeft >= 0) {
+        heroLeft -= 0.5 + speed * 0.2;
         hero.style.left = heroLeft + "vw";
       }
+
       if (isOnPlatform) {
         checkOffPlatform(hero);
-        collectingCoins(scoreCounter);
+        collectingCoins();
       }
     }, 25);
   }
 };
 
 const moveRight = (hero, repeat) => {
+  isMovingLeft = false;
   if (!repeat) {
     clearInterval(rightMoveInterval);
     isMovingRight = true;
@@ -188,17 +193,14 @@ const moveRight = (hero, repeat) => {
     }
 
     rightMoveInterval = setInterval(() => {
-      if (heroLeft <= 92.5 && (isJumping || isFalling)) {
-        heroLeft += 0.65 + speed * 0.2;
-        hero.style.left = heroLeft + "vw";
-      } else if (heroLeft <= 92.5) {
-        heroLeft += 0.5;
+      if (heroLeft <= 92.5) {
+        heroLeft += 0.5 + speed * 0.2;
         hero.style.left = heroLeft + "vw";
       }
 
       if (isOnPlatform) {
         checkOffPlatform(hero);
-        collectingCoins(scoreCounter);
+        collectingCoins();
       }
     }, 25);
   }
@@ -213,7 +215,7 @@ const fallItems = (hero) => {
 
       if (platformBottomMove < 10) {
         let bottomPlatform = platforms[0];
-        bottomPlatform.classList.remove("platform");
+        bottomPlatform.remove();
         platforms.shift();
         createNewPlatformWithCoin();
       }
@@ -226,7 +228,7 @@ const fallItems = (hero) => {
 
       if (coinBottomMove < 13) {
         let bottomCoin = coins[0];
-        bottomCoin.classList.remove("score");
+        bottomCoin.remove();
         coins.shift();
       }
     });

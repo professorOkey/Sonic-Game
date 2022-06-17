@@ -36,4 +36,9 @@ const createNewPlatformWithCoin = () => {
   document.body.insertAdjacentElement("afterbegin", platform);
 };
 
-export { platforms, renderPlatforms, createInitPlatforms, createNewPlatformWithCoin };
+export {
+  platforms,
+  renderPlatforms,
+  createInitPlatforms,
+  createNewPlatformWithCoin,
+};

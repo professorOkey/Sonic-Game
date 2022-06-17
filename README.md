@@ -1,3 +1,2 @@
-# sonic-game
+# task2.9
 
-created by @ProfessorOkey

@@ -21,15 +21,15 @@ export const createMainMenu = () => {
                 <div class="contol__buttons-title">Use these keys <br> to get max score</div>
                 <div class="control__buttons-keys">
                     <div class="keys__item-a">A</div>
-                    <div class="item-a decor"><img src="/img/arrow.svg" alt=""></div>
+                    <div class="item-a decor"><img src="./img/arrow.svg" alt=""></div>
                     <div class="item-a__description">move left</div>
                     <div class="keys__item-d">D</div>
-                    <div class="item-d decor"><img src="/img/arrow.svg" alt=""></div>
+                    <div class="item-d decor"><img src="./img/arrow.svg" alt=""></div>
                     <div class="item-d__description">move right</div>
                     <div class="keys__item-space">Space</div>
-                    <div class="item-space decor"><img src="/img/arrow.svg" alt=""></div>
+                    <div class="item-space decor"><img src="./img/arrow.svg" alt=""></div>
                     <div class="item-space__description">jump</div>
-                    <div class="background-decor"><img src="/img/Sonic.webp" alt=""></div>
+                    <div class="background-decor"><img src="./img/Sonic.webp" alt=""></div>
                 </div>
             </div>
             <div class="menu__start-game">
@@ -89,12 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("keyup", (event) => {
-      if ((event.code == "KeyA" || event.code == "KeyD")) {
+      if (event.code == "KeyA" || event.code == "KeyD") {
         stand(hero);
       }
     });
 
-    document.addEventListener("keypress", (event) => {
+    document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
         jump(hero);
       }
