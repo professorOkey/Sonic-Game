@@ -1,4 +1,4 @@
 Sonic Game
 
-creater by @ProfessorOkey
+created by @ProfessorOkey
 
