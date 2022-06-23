@@ -1,5 +1,6 @@
 import { platforms, createNewPlatformWithCoin } from "./platforms.js";
 import { coins } from "./coins.js";
+import { enemys } from "./enemy.js";
 import { fallItemsInterval } from "./app.js";
 
 let isOnPlatform = false;
@@ -28,15 +29,15 @@ const clearSideMoves = () => {
   clearInterval(leftMoveInterval);
 };
 
-const checkPrevAndCurrentPosition = (platformBottom, platformLeft) => {
+const checkHeroAndPlatform = (platformBottom, platformLeft) => {
   return (
     heroBottomPrevious >= platformBottom &&
-    heroBottomPrevious <= platformBottom + 3 &&
+    heroBottomPrevious <= platformBottom + 4 &&
     heroLeftPrevious + 3 >= platformLeft &&
-    heroLeftPrevious <= platformLeft + 12 &&
+    heroLeftPrevious <= platformLeft + 19 &&
     heroBottom >= platformBottom &&
-    heroBottom <= platformBottom + 3 &&
-    (heroLeft + 3 <= platformLeft || heroLeft >= platformLeft + 12)
+    heroBottom <= platformBottom + 4 &&
+    (heroLeft + 3 <= platformLeft || heroLeft >= platformLeft + 19)
   );
 };
 
@@ -73,11 +74,12 @@ const fall = (hero) => {
           heroBottom >= platformBottom &&
           heroBottom <= platformBottom + 3 &&
           heroLeft + 3 >= platformLeft &&
-          heroLeft <= platformLeft + 12
+          heroLeft <= platformLeft + 19
         ) {
           isFalling = false;
           clearInterval(fallingMoveInterval);
           isOnPlatform = true;
+          heroBottom = platformBottom + 3;
           startHeight = heroBottom;
           heroBottomPrevious = heroBottom;
           heroLeftPrevious = heroLeft;
@@ -113,7 +115,7 @@ const checkOffPlatform = (hero) => {
     let platformBottom = +platform.style.bottom.slice(0, -2);
     let platformLeft = +platform.style.left.slice(0, -2);
 
-    if (checkPrevAndCurrentPosition(platformBottom, platformLeft)) {
+    if (checkHeroAndPlatform(platformBottom, platformLeft)) {
       isOnPlatform = false;
       fall(hero);
     }
@@ -121,6 +123,22 @@ const checkOffPlatform = (hero) => {
 
   heroLeftPrevious = heroLeft;
   heroBottomPrevious = heroBottom;
+};
+
+const checkTouchingEnemy = () => {
+  enemys.forEach(({ body }) => {
+    let enemyBottom = +body.style.bottom.slice(0, -2);
+    let enemyLeft = +body.style.left.slice(0, -2);
+
+    if (
+      heroBottom >= enemyBottom - 1 &&
+      heroBottom <= enemyBottom + 4 &&
+      heroLeft + 6 >= enemyLeft &&
+      heroLeft <= enemyLeft + 3
+    ) {
+      stopCollectingCoins();
+    }
+  });
 };
 
 const collectingCoins = () => {
@@ -173,6 +191,7 @@ const moveLeft = (hero, repeat) => {
       }
 
       if (isOnPlatform) {
+        checkTouchingEnemy();
         checkOffPlatform(hero);
         collectingCoins();
       }
@@ -199,6 +218,7 @@ const moveRight = (hero, repeat) => {
       }
 
       if (isOnPlatform) {
+        checkTouchingEnemy();
         checkOffPlatform(hero);
         collectingCoins();
       }
@@ -230,6 +250,18 @@ const fallItems = (hero) => {
         let bottomCoin = coins[0];
         bottomCoin.remove();
         coins.shift();
+      }
+    });
+
+    enemys.forEach(({ body }) => {
+      let enemyBottom = +body.style.bottom.slice(0, -2);
+      enemyBottom -= 0.3 * speed;
+      body.style.bottom = enemyBottom + "vh";
+
+      if (enemyBottom < 13) {
+        let bottomEnemy = enemys[0];
+        bottomEnemy.body.remove();
+        enemys.shift();
       }
     });
 

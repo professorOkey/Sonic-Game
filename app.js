@@ -8,6 +8,7 @@ import {
 } from "./mainFunctions.js";
 import { renderPlatforms } from "./platforms.js";
 import { renderInitCoins } from "./coins.js";
+import { renderEnemys } from "./enemy.js";
 
 export let fallItemsInterval;
 
@@ -74,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderPlatforms();
     renderInitCoins();
+    renderEnemys();
     createScoreCounter();
 
     document.addEventListener("keydown", (event) => {
